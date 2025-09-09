@@ -512,7 +512,7 @@ export class TranslateService implements ITranslateService {
         interpolateParams?: InterpolationParameters,
     ): Observable<Translation> {
         if (!isDefinedAndNotNull(key) || !key.length) {
-            throw new Error(`Parameter "key" is required and cannot be empty`);
+            return of("");
         }
         // check if we are loading a new translation to use
         if (this.pending) {
@@ -584,7 +584,7 @@ export class TranslateService implements ITranslateService {
         interpolateParams?: InterpolationParameters,
     ): Translation {
         if (!isDefinedAndNotNull(key) || key.length === 0) {
-            throw new Error('Parameter "key" is required and cannot be empty');
+            return "";
         }
 
         const result = this.getParsedResult(key, interpolateParams);
@@ -701,7 +701,7 @@ export class TranslateService implements ITranslateService {
 
     /**
      * Sets the  language to use as a fallback
-     * @deprecated use setFallbackLanguage()
+     * @deprecated use setFallbackLang()
      */
     public setDefaultLang(lang: Language): Observable<InterpolatableTranslationObject> {
         return this.setFallbackLang(lang);
