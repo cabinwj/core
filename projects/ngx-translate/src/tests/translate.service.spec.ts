@@ -85,7 +85,7 @@ describe("TranslateService (Delayed loading)", () => {
     it("currentLang should be the language, on which use() was called last - reverse order", fakeAsync(() => {
         const completionOrder: string[] = [];
 
-        expect(translate.currentLang).toBeUndefined();
+        expect(translate.currentLang).toBeNull();
 
         translate.use("delay-20").subscribe(() => completionOrder.push("delay-20"));
         expect(translate.currentLang).toEqual("delay-20");
@@ -1055,6 +1055,7 @@ describe("TranslateService (Error Conditions and Recovery)", () => {
             providers: [
                 provideTranslateService({
                     loader: provideTranslateLoader(FakeLoader),
+                    lang: "en",
                 }),
             ],
         });

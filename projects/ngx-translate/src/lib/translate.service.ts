@@ -138,7 +138,12 @@ export abstract class ITranslateService {
      * Returns the current language
      * @deprecated use `getCurrentLang()`
      */
-    public abstract readonly currentLang: Language;
+    public abstract readonly currentLang: Language | null;
+
+    /**
+     * Gets the current language
+     */
+    public abstract getCurrentLang(): Language | null;
 
     /**
      * Returns a list of known languages - either loaded
@@ -225,8 +230,6 @@ export class TranslateService implements ITranslateService, OnDestroy {
     }
 
     constructor() {
-        console.log("Constructor TranslateService");
-
         const config: TranslateServiceConfig = {
             extend: false,
             fallbackLang: null,
@@ -236,19 +239,20 @@ export class TranslateService implements ITranslateService, OnDestroy {
             }),
         };
 
+        if (config.extend) {
+            this.extend = true;
+        }
+
         this.store.addLoader(this.currentLoader);
 
-        if (config.lang) {
-            this.use(config.lang);
+        const currentLang = config.lang || this.store.getCurrentLang();
+        if (currentLang) {
+            this.use(currentLang);
         }
 
-        if (config.fallbackLang) {
-            this.setFallbackLang(config.fallbackLang);
-        }
-
-        if (config.extend) {
-            // we are a child service
-            this.extend = true;
+        const fallbackLang = config.fallbackLang || this.store.getFallbackLang();
+        if (fallbackLang) {
+            this.setFallbackLang(fallbackLang);
         }
     }
 
@@ -341,7 +345,7 @@ export class TranslateService implements ITranslateService, OnDestroy {
         this.store.setCurrentLang(lang);
     }
 
-    public getCurrentLang(): Language {
+    public getCurrentLang(): Language | null {
         return this.store.getCurrentLang();
     }
 
@@ -630,8 +634,16 @@ export class TranslateService implements ITranslateService, OnDestroy {
     public set(
         key: string,
         translation: string | TranslationObject,
-        lang: Language = this.getCurrentLang(),
+        lang: string | null = null,
     ): void {
+        if (lang === null) {
+            lang = this.getCurrentLang();
+        }
+
+        if (lang === null) {
+            throw new Error("No language specified");
+        }
+
         this.store.setTranslations(
             lang,
             insertValue(
@@ -710,7 +722,7 @@ export class TranslateService implements ITranslateService, OnDestroy {
      * The lang currently used
      * @deprecated use `getCurrentLang()`
      */
-    get currentLang(): Language {
+    get currentLang(): Language | null {
         return this.store.getCurrentLang();
     }
 

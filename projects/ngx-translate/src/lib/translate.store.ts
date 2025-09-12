@@ -29,7 +29,7 @@ export class TranslateStore {
         new Subject<FallbackLangChangeEvent>();
 
     private fallbackLang: Language | null = null;
-    private currentLang!: Language;
+    private currentLang: Language | null = null;
 
     private translations: Record<Language, InterpolatableTranslationObject> = {};
     private languages: Language[] = [];
@@ -87,7 +87,7 @@ export class TranslateStore {
         return this.languages;
     }
 
-    public getCurrentLang(): Language {
+    public getCurrentLang(): Language | null {
         return this.currentLang;
     }
 
@@ -155,7 +155,7 @@ export class TranslateStore {
     }
 
     public getTranslation(key: string): InterpolatableTranslation {
-        let text = this.getValue(this.currentLang, key);
+        let text = this.currentLang ? this.getValue(this.currentLang, key) : undefined;
 
         if (
             text === undefined &&
