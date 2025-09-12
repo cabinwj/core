@@ -1,8 +1,9 @@
-import { ClassProvider, Injectable, Provider } from "@angular/core";
+import { Injectable, Provider } from "@angular/core";
 import { Observable, of, timer } from "rxjs";
 import { map } from "rxjs/operators";
 import {
     provideTranslateService,
+    provideChildTranslateService,
     RootTranslateServiceConfig,
     TranslateCompiler,
     TranslateLoader,
@@ -47,12 +48,17 @@ export class TestableTranslateService extends TranslateService {
 export function provideTestableTranslateService(
     config: RootTranslateServiceConfig = {},
 ): Provider[] {
-    const providers: Provider[] = provideTranslateService(config);
-    const translateServicedProvider: ClassProvider | undefined = providers.find(
-        (provider) => (provider as ClassProvider).provide === TranslateService,
-    ) as ClassProvider | undefined;
-    if (translateServicedProvider === undefined)
-        throw new Error("Could not find TranslateService provider in provided providers");
-    translateServicedProvider.useClass = TestableTranslateService;
-    return providers;
+    return provideTranslateService({
+        translateServiceClass: TestableTranslateService,
+        ...config,
+    });
+}
+
+export function provideTestableChildTranslateService(
+    config: RootTranslateServiceConfig = {},
+): Provider[] {
+    return provideChildTranslateService({
+        translateServiceClass: TestableTranslateService,
+        ...config,
+    });
 }

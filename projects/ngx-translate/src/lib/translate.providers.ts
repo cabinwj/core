@@ -19,6 +19,7 @@ export interface TranslateProviders {
     compiler?: Provider;
     parser?: Provider;
     missingTranslationHandler?: Provider;
+    translateServiceClass?: Type<TranslateService>;
 }
 
 export interface ChildTranslateServiceConfig extends Partial<TranslateProviders> {
@@ -118,7 +119,7 @@ export function defaultProviders(
 
     providers.push({
         provide: TranslateService,
-        useClass: TranslateService,
+        useClass: config.translateServiceClass ?? TranslateService,
         deps: [
             TranslateStore,
             TranslateLoader,

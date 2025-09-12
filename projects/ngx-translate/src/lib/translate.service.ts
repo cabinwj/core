@@ -225,6 +225,8 @@ export class TranslateService implements ITranslateService, OnDestroy {
     }
 
     constructor() {
+        console.log("Constructor TranslateService");
+
         const config: TranslateServiceConfig = {
             extend: false,
             fallbackLang: null,
@@ -233,6 +235,8 @@ export class TranslateService implements ITranslateService, OnDestroy {
                 optional: true,
             }),
         };
+
+        this.store.addLoader(this.currentLoader);
 
         if (config.lang) {
             this.use(config.lang);
@@ -243,10 +247,9 @@ export class TranslateService implements ITranslateService, OnDestroy {
         }
 
         if (config.extend) {
+            // we are a child service
             this.extend = true;
         }
-
-        this.store.addLoader(this.currentLoader);
     }
 
     ngOnDestroy(): void {
